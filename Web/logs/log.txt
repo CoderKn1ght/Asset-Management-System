@@ -1,0 +1,24 @@
+ERROR 2018-02-16 21:26:17,091  4545ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 21:26:31,048 18503ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 21:26:32,612 20067ms MvcApplication         Application_Error  - The controller for path '/Home/About' was not found or does not implement IController.
+ERROR 2018-02-16 21:26:34,603 22058ms MvcApplication         Application_Error  - The controller for path '/Home/Contact' was not found or does not implement IController.
+ERROR 2018-02-16 21:26:37,410 24865ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 21:42:28,714  3484ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 22:10:41,539  1889ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 22:10:49,998 10347ms MvcApplication         Application_Error  - Error activating IFacilityService
+No matching bindings are available, and the type is not self-bindable.
+Activation path:
+  2) Injection of dependency IFacilityService into parameter facilityService of constructor of type FacilityController
+  1) Request for FacilityController
+
+Suggestions:
+  1) Ensure that you have defined a binding for IFacilityService.
+  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.
+  3) Ensure you have not accidentally created more than one kernel.
+  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.
+  5) If you are using automatic module loading, ensure the search path and filters are correct.
+
+ERROR 2018-02-16 22:12:29,290  1434ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-16 22:15:47,189  1152ms MvcApplication         Application_Error  - The controller for path '/' was not found or does not implement IController.
+ERROR 2018-02-18 00:05:25,027 30204ms MvcApplication         Application_Error  - A public action method 'Create' was not found on controller 'ContosoUniversity.Controllers.StandardController'.
+ERROR 2018-02-18 01:21:55,636 146110ms MvcApplication         Application_Error  - The controller for path '/Student' was not found or does not implement IController.
