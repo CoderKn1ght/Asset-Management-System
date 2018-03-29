@@ -1,0 +1,29 @@
+﻿@model Asset_Management_System.Models.AssetManagementSystem.Facility
+@{
+    ViewBag.Title = "Resources";
+}
+
+<h2>Resources</h2>
+<table class="table">
+    <tr>
+        <th>Resource Name</th>
+        <th>Quantity</th>
+        <th>Description</th>
+        <th>Color</th>
+        <th>Size</th>
+        <th></th>
+    </tr>
+
+
+    @foreach (var resource in Model.Resources)
+    {
+    <tr>
+        <td>@resource.ResourceName</td>
+        <td>@resource.Quantity</td>
+        <td>@resource.Description</td>
+        <td>@resource.Color</td>
+        <td>@resource.Size</td>
+
+    </tr>
+    }
+</table>
