@@ -8,10 +8,6 @@ namespace Asset_Management_System.Models.AssetManagementSystem
 {
     public class User
     {
-        public User()
-        {
-            UsersToFacilities = new HashSet<UserToFacility>();
-        }
         [Key]
         public int Id { get; set; }
         [Required]
@@ -23,8 +19,8 @@ namespace Asset_Management_System.Models.AssetManagementSystem
         public string Password { get; set; }
         [EmailAddress]
         public string EmailId { get; set; }
-        public bool IsActive { get; set; }
-
-        public virtual ICollection<UserToFacility> UsersToFacilities { get; set; }
+        public bool IsActive { get; set; } = true;
+        
+        public virtual ICollection<Facility> Facilities { get; set; }
     }
 }

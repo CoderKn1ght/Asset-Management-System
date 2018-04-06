@@ -1,5 +1,7 @@
 using Asset_Management_System.Models.AssetManagementSystem;
 using System.Collections.Generic;
+using System.Linq;
+using Asset_Management_System.Data;
 
 namespace Asset_Management_System.Migrations
 {
@@ -87,40 +89,34 @@ namespace Asset_Management_System.Migrations
                 {
                     new User
                     {
-                        UserName = "toor",
+                        UserName = "admin",
                         Password = "password",
-                        IsAdmin = true
+                        IsAdmin = true,
+                        IsActive = true,
+                        Facilities = new List<Facility>()
                     },
                     new User
                     {
-                        UserName = "shashank",
+                        UserName = "resource_checker",
                         Password = "password",
-                        IsAdmin = false
+                        IsAdmin = true,
+                        IsActive = true,
+                        Facilities = new List<Facility>()
                     }
                 };
             users.ForEach(s => context.Users.AddOrUpdate(p => p.UserName, s));
             context.SaveChanges();
-            var usersToFacilities = new List<UserToFacility>()
-            {
-                new UserToFacility()
-                {
-                    FacilityId = 1,
-                    UserId = 1
-                },
-                new UserToFacility()
-                {
-                    FacilityId = 2,
-                    UserId = 1
-                },
-                new UserToFacility()
-                {
-                    FacilityId = 2,
-                    UserId = 2
-                }
-            };
-
-            usersToFacilities.ForEach(s => context.UserToFacilities.AddOrUpdate(p => new {p.FacilityId,p.UserId}, s));
+            AddOrUpdateUser(context, "admin", "ERB");
+            AddOrUpdateUser(context, "resource_checker", "ERB");
             context.SaveChanges();
+
+        }
+        void AddOrUpdateUser(AssetManagementContext context, string userName, string facilityName)
+        {
+            var user = context.Users.SingleOrDefault(c => c.UserName == userName);
+            var facility = user.Facilities.SingleOrDefault(i => i.Name == facilityName);
+            if (facility == null)
+                user.Facilities.Add(context.Facilities.Single(i => i.Name == facilityName));
         }
     }
 }

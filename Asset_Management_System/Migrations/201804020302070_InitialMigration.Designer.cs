@@ -13,7 +13,7 @@ namespace Asset_Management_System.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201803270520243_InitialMigration"; }
+            get { return "201804020302070_InitialMigration"; }
         }
         
         string IMigrationMetadata.Source

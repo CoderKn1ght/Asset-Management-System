@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
+using Asset_Management_System.Authorize;
 using Asset_Management_System.Data;
 using Asset_Management_System.Models.AssetManagementSystem;
 
 namespace Asset_Management_System.Controllers
 {
+    [CustomLoginFilter]
     public class ResourcesController : Controller
     {
-        private AssetManagementContext db = new AssetManagementContext();
+         private readonly AssetManagementContext _db = new AssetManagementContext();
 
         // GET: Resources
         public ActionResult Index()
         {
-            var resources = db.Resources.Include(r => r.Facility);
+            var resources = _db.Resources.Where(r => r.IsActive).Include(f => f.Facility);
             return View(resources.ToList());
         }
 
@@ -29,7 +27,7 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Resource resource = db.Resources.Find(id);
+            var resource = _db.Resources.SingleOrDefault(r=>r.IsActive == true && r.Id == id);
             if (resource == null)
             {
                 return HttpNotFound();
@@ -40,7 +38,7 @@ namespace Asset_Management_System.Controllers
         // GET: Resources/Create
         public ActionResult Create()
         {
-            ViewBag.FacilityId = new SelectList(db.Facilities, "Id", "Name");
+            ViewBag.FacilityId = new SelectList(_db.Facilities.Where(f => f.IsActive), "Id", "Name");
             return View();
         }
 
@@ -53,15 +51,86 @@ namespace Asset_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Resources.Add(resource);
-                db.SaveChanges();
+                _db.Resources.Add(resource);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.FacilityId = new SelectList(db.Facilities, "Id", "Name", resource.FacilityId);
+            ViewBag.FacilityId = new SelectList(_db.Facilities.Where(f=>f.IsActive), "Id", "Name", resource.FacilityId);
             return View(resource);
         }
 
+        public ActionResult UpdateQuantity(int? id, string validate)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id);
+
+            if (resource == null)
+            {
+                return HttpNotFound();
+            }
+
+            var viewModel = new InventoryCheckViewModel
+            {
+                ResourceId = resource.Id,
+                Quantity = resource.Quantity,
+                ResourceName = resource.ResourceName,
+                FacilityId = resource.FacilityId
+            };
+                
+            if ((string)Session["IsAdmin"] == "True")
+            {
+                viewModel.ResourceCheckerComments = resource.ResourceCheckerComments;
+            }
+
+            ViewBag.Validate = validate;
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateQuantity([Bind(Include = "ResourceId,ResourceName,Quantity,ResourceCheckerComments,AdminComments,FacilityId")] InventoryCheckViewModel resource, string validate)
+        {
+            
+            var currentResource = _db.Resources.SingleOrDefault(r => r.Id == resource.ResourceId);
+            if (ModelState.IsValid && currentResource!=null)
+            {
+                if (currentResource.Quantity != resource.Quantity)
+                {
+                    if((string)Session["IsAdmin"] == "False")
+                    {
+                        currentResource.AdminComments = null;
+                        currentResource.IsValid = false;
+                    }
+                    if ((resource.AdminComments == null || resource.AdminComments.Equals(string.Empty)))
+                        currentResource.IsValid = false;
+                    else
+                    {
+                        currentResource.IsValid = true;
+                    }
+                }
+                else
+                {
+                    currentResource.IsValid = true;
+                }
+                currentResource.AdminComments = resource.AdminComments;
+                currentResource.Quantity = resource.Quantity;
+                currentResource.ResourceCheckerComments = resource.ResourceCheckerComments;
+                _db.Entry(currentResource).State = EntityState.Modified;
+                _db.SaveChanges();
+                var facilityId = currentResource.FacilityId;
+                if (validate != null)
+                {
+                    return RedirectToAction("Index", "Reports");
+                }
+                return RedirectToAction("Resources", "Facilities", new { id = facilityId });
+            }
+
+            return HttpNotFound();
+        }
         // GET: Resources/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -69,12 +138,12 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Resource resource = db.Resources.Find(id);
+            Resource resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id);
             if (resource == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.FacilityId = new SelectList(db.Facilities, "Id", "Name", resource.FacilityId);
+            ViewBag.FacilityId = new SelectList(_db.Facilities, "Id", "Name", resource.FacilityId);
             return View(resource);
         }
 
@@ -87,11 +156,11 @@ namespace Asset_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(resource).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(resource).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.FacilityId = new SelectList(db.Facilities, "Id", "Name", resource.FacilityId);
+            ViewBag.FacilityId = new SelectList(_db.Facilities, "Id", "Name", resource.FacilityId);
             return View(resource);
         }
 
@@ -102,7 +171,7 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Resource resource = db.Resources.Find(id);
+            Resource resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id);
             if (resource == null)
             {
                 return HttpNotFound();
@@ -115,9 +184,16 @@ namespace Asset_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Resource resource = db.Resources.Find(id);
-            db.Resources.Remove(resource);
-            db.SaveChanges();
+            var resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id); db.Resources.Find(id);
+            if (resource == null)
+            {
+                ModelState.AddModelError("", "Resource not found");
+            }
+            else
+            {
+                resource.IsActive = false;
+                _db.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
 
@@ -125,7 +201,7 @@ namespace Asset_Management_System.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

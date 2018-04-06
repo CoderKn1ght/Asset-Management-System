@@ -1484,6 +1484,17 @@ th {
   background-color: #f9f9f9;
 }
 
+.table-danger, .table-danger > td, .table-danger > th {
+    background-color: #f5c6cb;
+}
+
+.table-primary, .table-primary > td, .table-primary > th {
+    background-color: #b8daff;
+}
+
+.table-success, .table-success > td, .table-success > th {
+    background-color: #c3e6cb;
+}
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
   background-color: #f5f5f5;

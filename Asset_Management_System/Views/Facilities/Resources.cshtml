@@ -11,19 +11,29 @@
         <th>Description</th>
         <th>Color</th>
         <th>Size</th>
-        <th></th>
+        <th>Actions</th>
     </tr>
 
 
     @foreach (var resource in Model.Resources)
     {
-    <tr>
-        <td>@resource.ResourceName</td>
-        <td>@resource.Quantity</td>
-        <td>@resource.Description</td>
-        <td>@resource.Color</td>
-        <td>@resource.Size</td>
+        if (resource.IsActive)
+        {
+            <tr>
+                <td>@resource.ResourceName</td>
+                <td>@resource.Quantity</td>
+                <td>@resource.Description</td>
+                <td>@resource.Color</td>
+                <td>@resource.Size</td>
+                <td><a href="/Resources/UpdateQuantity/@resource.Id">Update Quantity</a></td>
+            </tr>
+        }
+        if (Model.Resources.Count == 0)
+        {
+            <tr>
+                <td>The Facility has no resources</td>
+            </tr>
+        }
 
-    </tr>
     }
 </table>

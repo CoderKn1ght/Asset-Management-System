@@ -29,9 +29,7 @@
         <th>
             @Html.DisplayNameFor(model => model.EmailId)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
+        <th>@Html.DisplayNameFor(model => model.Facilities)</th>
         <th></th>
     </tr>
 
@@ -56,7 +54,19 @@
             @Html.DisplayFor(modelItem => item.EmailId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
+            @{
+                if (item.IsAdmin)
+                {
+                    @: All
+                }
+                else
+                {
+                    foreach (var facility in item.Facilities)
+                    {
+                        @:  @facility.Name <br />
+                    }
+                }
+            }
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

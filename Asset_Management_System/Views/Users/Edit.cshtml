@@ -76,7 +76,36 @@
                 </div>
             </div>
         </div>
+        
+        <div id="UserFacilities">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Facilities, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                        @{
+                            var count = 0;
+                            List<Asset_Management_System.Models.AssetManagementSystem.UserFacilityViewModel> facilities = ViewBag.Facilities;
 
+                            foreach (var facility in facilities)
+                            {
+                                if (count++ % 3 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                <input type="checkbox" name="selectedFacilities" value="@facility.FacilityId"
+                                       @(Html.Raw(facility.Assigned ? "checked=\"checked\"" : ""))/>
+                                @facility.FacilityName
+                                @:</td>
+
+                            }
+                            @:</tr>          
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
@@ -92,3 +121,19 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script>
+    var isAdmin = document.getElementById("IsAdmin");
+    if (isAdmin.checked) {
+        $("#UserFacilities").hide();
+    } else {
+        $("#UserFacilities").show();
+    }
+    isAdmin.addEventListener('change', function () {
+        if (this.checked) {
+            $("#UserFacilities").hide();
+        } else {
+            $("#UserFacilities").show();
+        }
+    });
+</script>

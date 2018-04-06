@@ -64,13 +64,33 @@
                 @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
             </div>
         </div>
+        
+        <div id="UserFacilities">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Facilities, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                        @{
+                            var count = 0;
+                            List<Asset_Management_System.Models.AssetManagementSystem.UserFacilityViewModel> facilities = ViewBag.Facilities;
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActive)
-                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                            foreach (var facility in facilities)
+                            {
+                                if (count++ % 3 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                <input type="checkbox" name="selectedFacilities" value="@facility.FacilityId"
+                                       @(Html.Raw(facility.Assigned ? "checked=\"checked\"" : ""))/>
+                                @facility.FacilityName
+                                @:</td>
+
+                            }
+                            @:</tr>          
+                        }
+                    </table>
                 </div>
             </div>
         </div>
@@ -90,3 +110,15 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script>
+    var isAdmin = document.getElementById("IsAdmin");
+    
+    isAdmin.addEventListener('change', function() {
+        if (this.checked) {
+            $("#UserFacilities").hide();
+        } else {
+            $("#UserFacilities").show();
+        }
+    });
+</script>

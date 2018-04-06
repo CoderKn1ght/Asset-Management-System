@@ -1,19 +1,15 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Asset_Management_System.Data;
+using Asset_Management_System.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Asset_Management_System.Models;
 
 namespace Asset_Management_System.Controllers
 {
-    
     public class AccountController : Controller
     {
         private AssetManagementContext db = new AssetManagementContext();
@@ -74,17 +70,15 @@ namespace Asset_Management_System.Controllers
             }
 
             var usr = db.Users.SingleOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
-            if (usr != null)
+            if (usr != null && usr.IsActive)
             {
                 Session["UserId"] = usr.Id.ToString();
-                Session["Username"] = usr.UserName.ToString();
+                Session["Username"] = usr.UserName;
                 Session["IsAdmin"] = usr.IsAdmin.ToString();
-                return RedirectToAction("Index", "Facilities", UrlParameter.Optional);
+                return returnUrl == null ? RedirectToAction("Index", "Facilities", UrlParameter.Optional) : RedirectToLocal(returnUrl);
             }
-            else
-            {
-                ModelState.AddModelError("", "Username or Password is incorrect");
-            }
+
+            ModelState.AddModelError("", "Either the Username/Password is incorrect or the User is Inactive.");
             //return RedirectToAction("Login", "Account", UrlParameter.Optional);
             return View();
         }
@@ -341,7 +335,7 @@ namespace Asset_Management_System.Controllers
             {
                 return View("Error");
             }
-            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
         }
 
         //

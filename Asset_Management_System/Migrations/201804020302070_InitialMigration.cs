@@ -30,23 +30,13 @@ namespace Asset_Management_System.Migrations
                         Color = c.String(),
                         Size = c.String(),
                         IsActive = c.Boolean(nullable: false),
+                        ResourceCheckerComments = c.String(),
+                        AdminComments = c.String(),
+                        IsValid = c.Boolean(nullable: false),
                         FacilityId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Facilities", t => t.FacilityId, cascadeDelete: true)
-                .Index(t => t.FacilityId);
-            
-            CreateTable(
-                "dbo.UserToFacilities",
-                c => new
-                    {
-                        UserId = c.Int(nullable: false),
-                        FacilityId = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.FacilityId })
-                .ForeignKey("dbo.Facilities", t => t.FacilityId, cascadeDelete: true)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId)
                 .Index(t => t.FacilityId);
             
             CreateTable(
@@ -64,18 +54,31 @@ namespace Asset_Management_System.Migrations
                     })
                 .PrimaryKey(t => t.Id);
             
+            CreateTable(
+                "dbo.UserFacilities",
+                c => new
+                    {
+                        User_Id = c.Int(nullable: false),
+                        Facility_Id = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.User_Id, t.Facility_Id })
+                .ForeignKey("dbo.Users", t => t.User_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Facilities", t => t.Facility_Id, cascadeDelete: true)
+                .Index(t => t.User_Id)
+                .Index(t => t.Facility_Id);
+            
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.UserToFacilities", "UserId", "dbo.Users");
-            DropForeignKey("dbo.UserToFacilities", "FacilityId", "dbo.Facilities");
+            DropForeignKey("dbo.UserFacilities", "Facility_Id", "dbo.Facilities");
+            DropForeignKey("dbo.UserFacilities", "User_Id", "dbo.Users");
             DropForeignKey("dbo.Resources", "FacilityId", "dbo.Facilities");
-            DropIndex("dbo.UserToFacilities", new[] { "FacilityId" });
-            DropIndex("dbo.UserToFacilities", new[] { "UserId" });
+            DropIndex("dbo.UserFacilities", new[] { "Facility_Id" });
+            DropIndex("dbo.UserFacilities", new[] { "User_Id" });
             DropIndex("dbo.Resources", new[] { "FacilityId" });
+            DropTable("dbo.UserFacilities");
             DropTable("dbo.Users");
-            DropTable("dbo.UserToFacilities");
             DropTable("dbo.Resources");
             DropTable("dbo.Facilities");
         }

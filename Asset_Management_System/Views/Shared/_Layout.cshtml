@@ -21,13 +21,14 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @if (Session["Id"] != null)
+                    @if (Session["UserId"] != null)
                     {
                         <li>@Html.ActionLink("Home", "Index", "Facilities")</li>
                     }
                     @if ((String) Session["IsAdmin"] == "True") { 
                         <li>@Html.ActionLink("User Management", "Index", "Users")</li>
                         <li>@Html.ActionLink("Resource Management", "Index", "Resources")</li>
+                        <li>@Html.ActionLink("Reports", "Index", "Reports")</li>
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")

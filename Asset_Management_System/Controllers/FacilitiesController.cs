@@ -1,43 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
+using Asset_Management_System.Authorize;
 using Asset_Management_System.Data;
 using Asset_Management_System.Models.AssetManagementSystem;
 
 namespace Asset_Management_System.Controllers
 {
+    [CustomLoginFilter]
     public class FacilitiesController : Controller
     {
-        private AssetManagementContext db = new AssetManagementContext();
-
+        private readonly AssetManagementContext  _db = new AssetManagementContext();
         // GET: Facilities
         public ActionResult Index()
         {
             var userId = Convert.ToInt32(Session["UserId"]);
-            var user = db.Users.SingleOrDefault(u => u.Id == userId);
+            var user = _db.Users.SingleOrDefault(u => u.Id == userId);
             if (user != null)
             {
-                return View(db.UserToFacilities.Where(f => f.UserId == userId).Select(f => f.Facility).ToList());
-            }
-            else
-            {
-                ModelState.AddModelError("", "User has no facilities assigned");
+                return View(user.IsAdmin != true ? user.Facilities.Where(f => f.IsActive).ToList() : _db.Facilities.Where(f => f.IsActive).ToList());
             }
 
+            ModelState.AddModelError("", "Invalid User");
             return View();
         }
 
         public ActionResult Resources(int id)
         {
-            var relatedResources = db.Facilities.Include("Resources").SingleOrDefault(f => f.Id == id);
+            var relatedResources = _db.Facilities.Include(x => x.Resources).SingleOrDefault(f => f.Id == id && f.IsActive);
             if (relatedResources == null)
             {
-                ModelState.AddModelError("", "No Resources has been assigned");
+                ModelState.AddModelError("", "No such Facility Exists");
             }
             return View(relatedResources);
         }
@@ -49,8 +44,8 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Facility facility = db.Facilities.Find(id);
-            if (facility == null)
+            var facility = _db.Facilities.SingleOrDefault(f=>f.IsActive && f.Id == id);
+            if (facility == null || facility.IsActive == false)
             {
                 return HttpNotFound();
             }
@@ -58,6 +53,7 @@ namespace Asset_Management_System.Controllers
         }
 
         // GET: Facilities/Create
+        [CustomAdminOnlyFilter]
         public ActionResult Create()
         {
             return View();
@@ -72,8 +68,8 @@ namespace Asset_Management_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Facilities.Add(facility);
-                db.SaveChanges();
+                _db.Facilities.Add(facility);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -81,13 +77,14 @@ namespace Asset_Management_System.Controllers
         }
 
         // GET: Facilities/Edit/5
+        [CustomAdminOnlyFilter]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Facility facility = db.Facilities.Find(id);
+            var facility = _db.Facilities.SingleOrDefault(f => f.IsActive && f.Id == id);
             if (facility == null)
             {
                 return HttpNotFound();
@@ -100,25 +97,26 @@ namespace Asset_Management_System.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,Address,IsActive")] Facility facility)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description,Address")] Facility facility)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(facility).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(facility).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(facility);
         }
 
         // GET: Facilities/Delete/5
+        [CustomAdminOnlyFilter]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Facility facility = db.Facilities.Find(id);
+            var facility = _db.Facilities.SingleOrDefault(f => f.IsActive && f.Id == id);
             if (facility == null)
             {
                 return HttpNotFound();
@@ -131,9 +129,14 @@ namespace Asset_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Facility facility = db.Facilities.Find(id);
-            db.Facilities.Remove(facility);
-            db.SaveChanges();
+            var facility = _db.Facilities.SingleOrDefault(f => f.IsActive && f.Id == id);
+            if (facility == null) return RedirectToAction("Index");
+            if (facility.Resources.Count > 0) { 
+                ModelState.AddModelError("","Cannot delete a facility that has resources assigned to it. Kindly delete the resources and try again.");
+                return View("Delete", facility);
+            }
+            facility.IsActive = false;
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -141,7 +144,7 @@ namespace Asset_Management_System.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

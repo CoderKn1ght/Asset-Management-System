@@ -1,0 +1,95 @@
+﻿@model Asset_Management_System.Models.AssetManagementSystem.InventoryCheckViewModel
+
+@{
+    ViewBag.Title = "Inventory Check";
+}
+
+<h2>Inventory Check</h2>
+
+@using (Html.BeginForm("UpdateQuantity", "Resources", new { validate = @ViewBag.Validate }, FormMethod.Post, new { @class = "form-horizontal", role = "form", @onsubmit = "return formValidate()" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ResourceId)
+        <input type="hidden" id="IsAdmin" value=@((string)Session["IsAdmin"]) />
+        <div class="form-group">
+            @Html.LabelFor(model => model.ResourceName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ResourceName, new { htmlAttributes = new { @class = "form-control", @readonly = "true" } })
+                @Html.ValidationMessageFor(model => model.ResourceName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Quantity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Quantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ResourceCheckerComments, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @((string)Session["IsAdmin"] == "True" ? Html.EditorFor(model => model.ResourceCheckerComments, new { htmlAttributes = new { @class = "form-control", @readonly = true } }) : Html.EditorFor(model => model.ResourceCheckerComments, new { htmlAttributes = new { @class = "form-control" } }))
+
+                @Html.ValidationMessageFor(model => model.ResourceCheckerComments, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div id="Admin_Comments">
+            <div class="form-group">
+                @Html.LabelFor(model => model.AdminComments, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AdminComments, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.AdminComments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <p id="error" class="text-danger"></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        if (document.getElementById("IsAdmin").value !== "True") {
+            $("#Admin_Comments").hide();
+        }
+    });
+    function formValidate() {
+        var isAdmin = document.getElementById("IsAdmin").value;
+        if (isAdmin !== "True") {
+            var resourceCheckerComments = document.getElementById("ResourceCheckerComments").value;
+            if (resourceCheckerComments.trim() == "") {
+                document.getElementById("error").innerHTML = "Comments Field is Required.";
+                return false;
+            }
+        } else {
+            var adminComments = document.getElementById("AdminComments").value;
+            if (adminComments.trim() == "") {
+                document.getElementById("error").innerHTML = "Admin Comments Field is Required.";
+                return false;
+            }
+        }
+        return true;
+    }
+</script>

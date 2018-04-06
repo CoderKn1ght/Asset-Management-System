@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
+    <Reference Include="System.Activities" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
@@ -189,34 +190,40 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Authorize\CustomAdminOnlyFilter.cs" />
+    <Compile Include="Authorize\CustomLoginFilter.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FacilitiesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\ResourcesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Data\AssetManagementContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201803270520243_InitialMigration.cs" />
-    <Compile Include="Migrations\201803270520243_InitialMigration.Designer.cs">
-      <DependentUpon>201803270520243_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201804020302070_InitialMigration.cs" />
+    <Compile Include="Migrations\201804020302070_InitialMigration.Designer.cs">
+      <DependentUpon>201804020302070_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\AssetManagementSystem\CheckBoxViewModel.cs" />
+    <Compile Include="Models\AssetManagementSystem\FacilityResourceViewModel.cs" />
+    <Compile Include="Models\AssetManagementSystem\FacilityViewModel.cs" />
+    <Compile Include="Models\AssetManagementSystem\ReportViewModel.cs" />
+    <Compile Include="Models\AssetManagementSystem\UserFacilityViewModel.cs" />
     <Compile Include="Models\AssetManagementSystem\Facility.cs" />
+    <Compile Include="Models\AssetManagementSystem\InventoryCheckViewModel.cs" />
     <Compile Include="Models\AssetManagementSystem\Resource.cs" />
     <Compile Include="Models\AssetManagementSystem\User.cs" />
-    <Compile Include="Models\AssetManagementSystem\UserToFacility.cs" />
-    <Compile Include="Models\AssetManagementSystem\UserViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-test.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
@@ -228,9 +235,13 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -289,6 +300,8 @@
     <Content Include="Views\Resources\Edit.cshtml" />
     <Content Include="Views\Resources\Index.cshtml" />
     <Content Include="Views\Facilities\Resources.cshtml" />
+    <Content Include="Views\Resources\UpdateQuantity.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -304,11 +317,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201803270520243_InitialMigration.resx">
-      <DependentUpon>201803270520243_InitialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804020302070_InitialMigration.resx">
+      <DependentUpon>201804020302070_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

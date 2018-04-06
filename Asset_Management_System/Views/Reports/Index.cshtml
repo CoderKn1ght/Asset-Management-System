@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Asset_Management_System.Models.AssetManagementSystem.Facility>
+
+@{
+    ViewBag.Title = "Report";
+}
+
+<h2>View Report</h2>
+
+<table class="table" style="text-align: center" >
+    <tr style="background-color: black">
+        <th rowspan="2" style="vertical-align: middle; text-align: center; color:whitesmoke">
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th rowspan="2" style="vertical-align: middle; text-align: center;color: whitesmoke">
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th rowspan="2" style="vertical-align: middle; text-align: center;color: whitesmoke">
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th colspan="5" style="text-align: center;color: whitesmoke">@Html.DisplayNameFor(model => model.Resources)</th>
+    </tr>
+    <tr style="background-color: black">
+        <th style="color: whitesmoke" >Resource Name</th>
+        <th style="color: whitesmoke" >Quantity</th>
+        <th style="color: whitesmoke" >Resource Checker Comments</th>
+        <th style="color: whitesmoke" >Admin Comments</th>
+        <th style="color: whitesmoke" >Actions</th>
+    </tr>
+
+
+    @foreach (var item in Model)
+    {
+    var isValid = true;
+    foreach (var resource in item.Resources)
+    {
+        if (!resource.IsValid)
+        {
+            isValid = false;
+            break;
+        }
+    }
+    if (!isValid)
+    {
+        @: <tr style="background-color: #f5c6cb">
+    }
+    else
+    {
+        @: <tr style="background-color: #c3e6cb">
+    }
+        <td style="vertical-align: middle" rowspan="@item.Resources.Count">
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td style="vertical-align: middle" rowspan="@item.Resources.Count">
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td style="vertical-align: middle" rowspan="@item.Resources.Count">
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        var count = 0;
+        foreach (var resource in item.Resources)
+        {
+        if (count != 0)
+            {
+                if (!isValid)
+                {
+                    @: <tr style="background-color: #f5c6cb">
+                }
+                else
+                {
+                    @: <tr style="background-color: #c3e6cb">
+                }
+            }
+            if(resource.IsActive == true) { 
+                @: <td> @resource.ResourceName </td>
+                @: <td> @resource.Quantity </td>
+                @: <td> @resource.ResourceCheckerComments </td>
+                @: <td> @resource.AdminComments </td>
+                if (!resource.IsValid)
+                {
+                    @: <td><a href="/Resources/UpdateQuantity/@resource.Id?validate=true">Validate Changes</a></td>
+                }
+                else
+                {
+                    @: <td>No Action Required</td>
+                }
+                count++;
+            }
+        }
+        @: </tr>
+        }
+</table>

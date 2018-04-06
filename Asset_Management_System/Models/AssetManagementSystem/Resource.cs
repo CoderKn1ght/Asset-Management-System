@@ -19,6 +19,9 @@ namespace Asset_Management_System.Models.AssetManagementSystem
         public string Color { get; set; }
         public string Size { get; set; }
         public bool IsActive { get; set; }
+        public string ResourceCheckerComments { get; set; } = "";
+        public string AdminComments { get; set; } = "";
+        public bool IsValid { get; set; } = true;
 
         [ForeignKey("Facility")]
         public int FacilityId { get; set; }

@@ -15,6 +15,5 @@ namespace Asset_Management_System.Data
         public DbSet<Facility> Facilities { get; set; }
         public DbSet<Resource> Resources { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserToFacility> UserToFacilities { get; set; }
     }
 }

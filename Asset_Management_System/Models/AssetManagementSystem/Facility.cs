@@ -11,7 +11,6 @@ namespace Asset_Management_System.Models.AssetManagementSystem
         public Facility()
         {
             Resources = new HashSet<Resource>();
-            UsersToFacilities = new HashSet<UserToFacility>();
         }
         [Key]
         public int Id { get; set; }
@@ -25,6 +24,6 @@ namespace Asset_Management_System.Models.AssetManagementSystem
         public bool IsActive { get; set; } = true;
 
         public virtual ICollection<Resource> Resources { get; set; }
-        public virtual ICollection<UserToFacility> UsersToFacilities { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }
