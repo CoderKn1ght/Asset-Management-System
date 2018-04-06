@@ -184,7 +184,7 @@ namespace Asset_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id); db.Resources.Find(id);
+            var resource = _db.Resources.SingleOrDefault(r => r.IsActive == true && r.Id == id);
             if (resource == null)
             {
                 ModelState.AddModelError("", "Resource not found");
