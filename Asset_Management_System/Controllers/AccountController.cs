@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Asset_Management_System.Data;
+using Asset_Management_System.Helper;
 using Asset_Management_System.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -69,9 +70,11 @@ namespace Asset_Management_System.Controllers
                 return View(user);
             }
 
-            var usr = db.Users.SingleOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
-            if (usr != null && usr.IsActive)
+            var usr = db.Users.SingleOrDefault(u => u.UserName == user.UserName);
+            var salt = "ASS3TM4N4G3M3NT!";
+            if (usr != null && usr.IsActive && SecurityHelper.HashPassword(user.Password, ref salt) == usr.Password)
             {
+                var usrPasswordHash = SecurityHelper.HashPassword(usr.Password, ref salt);
                 Session["UserId"] = usr.Id.ToString();
                 Session["Username"] = usr.UserName;
                 Session["IsAdmin"] = usr.IsAdmin.ToString();

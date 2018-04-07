@@ -12,6 +12,5 @@ namespace Asset_Management_System.Models.AssetManagementSystem
         public int Quantity { get; set; }
         public string resourceCheckerComments { get; set; }
         public string AdminComments { get; set; }
-        public bool isChanged { get; set; }
     }
 }

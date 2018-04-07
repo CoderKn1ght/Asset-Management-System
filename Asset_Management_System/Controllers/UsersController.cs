@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Asset_Management_System.Authorize;
 using Asset_Management_System.Data;
 using Asset_Management_System.Models.AssetManagementSystem;
+using Asset_Management_System.Helper;
 
 namespace Asset_Management_System.Controllers
 {
@@ -45,7 +46,8 @@ namespace Asset_Management_System.Controllers
             var user = new User
             {
                 IsActive = true,
-                Facilities = new List<Facility>()
+                Facilities = new List<Facility>(),
+                Password = "password"
             };
             PopulateAssignedFacilities(user);
             return View(user);
@@ -58,6 +60,20 @@ namespace Asset_Management_System.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,UserName,FirstName,LastName,IsAdmin,Password,EmailId,IsActive")] User user, string[] selectedFacilities)
         {
+            List<String> users = _db.Users.Where(u => u.IsActive).Select(u => u.UserName).ToList();
+
+            if (users.Contains(user.UserName))
+            {
+                ModelState.AddModelError("", "Username not available");
+                var user1 = new User
+                {
+                    IsActive = true,
+                    Facilities = new List<Facility>(),
+                    Password = "password"
+                };
+                PopulateAssignedFacilities(user1);
+                return View("Create", user1);
+            }
             if (selectedFacilities != null)
             {
                 user.Facilities = new List<Facility>();
@@ -69,6 +85,9 @@ namespace Asset_Management_System.Controllers
             }
             if (ModelState.IsValid)
             {
+                var salt = "ASS3TM4N4G3M3NT!";
+                var hashedPassword = SecurityHelper.HashPassword(user.Password, ref salt);
+                user.Password = hashedPassword;
                 _db.Users.Add(user);
                 _db.SaveChanges();
                 SendUserMail(user);
@@ -77,7 +96,7 @@ namespace Asset_Management_System.Controllers
             PopulateAssignedFacilities(user);
             return View(user);
         }
-
+        
         private static void SendUserMail(User user)
         {
             const string serverUserName = "info.assetmanagementsystem@gmail.com";
@@ -110,7 +129,7 @@ namespace Asset_Management_System.Controllers
 
                 body += "\nNavigate to http://localhost:53810 and login with your credentials mentioned below. \n" +
                         "Username : " + user.UserName +
-                        "\nPassword : " + user.Password + "\n\n" +
+                        "\nPassword : password\n\n" +
                         "Regards," +
                         "\nAsset Management Team";
                 client.Send(serverUserName, user.EmailId, subject, body);
@@ -129,12 +148,12 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //User user = _db.Users.Find(id);
             var user = _db.Users.Include(f => f.Facilities).SingleOrDefault(i => i.Id == id && i.IsActive);
             if (user == null)
             {
                 return HttpNotFound();
             }
+            
             PopulateAssignedFacilities(user);
             return View(user);
         }
@@ -150,7 +169,7 @@ namespace Asset_Management_System.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
+
             var user = _db.Users.Include(f => f.Facilities).SingleOrDefault(i => i.Id == id);
             if (TryUpdateModel(user, "",
                 new[]
@@ -158,6 +177,12 @@ namespace Asset_Management_System.Controllers
             {
                 try
                 {
+                    var salt = "ASS3TM4N4G3M3NT!";
+                    var hashedPassword = SecurityHelper.HashPassword(user.Password, ref salt);
+                    if (user.Password.Length < 15)
+                    {
+                        user.Password = hashedPassword;
+                    }
                     UpdateUserFacilities(selectedFacilities, user);
                     _db.Entry(user).State = EntityState.Modified;
                     _db.SaveChanges();

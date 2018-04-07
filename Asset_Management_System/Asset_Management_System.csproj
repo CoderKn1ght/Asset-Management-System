@@ -203,18 +203,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\SecurityHelper.cs" />
     <Compile Include="Migrations\201804020302070_InitialMigration.cs" />
     <Compile Include="Migrations\201804020302070_InitialMigration.Designer.cs">
       <DependentUpon>201804020302070_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\AssetManagementSystem\FacilityResourceViewModel.cs" />
-    <Compile Include="Models\AssetManagementSystem\FacilityViewModel.cs" />
-    <Compile Include="Models\AssetManagementSystem\ReportViewModel.cs" />
-    <Compile Include="Models\AssetManagementSystem\UserFacilityViewModel.cs" />
+    <Compile Include="ViewModels\FacilityResourceViewModel.cs" />
+    <Compile Include="ViewModels\FacilityViewModel.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\UserDetailsEditViewModel.cs" />
+    <Compile Include="ViewModels\UserFacilityViewModel.cs" />
     <Compile Include="Models\AssetManagementSystem\Facility.cs" />
-    <Compile Include="Models\AssetManagementSystem\InventoryCheckViewModel.cs" />
+    <Compile Include="ViewModels\InventoryCheckViewModel.cs" />
     <Compile Include="Models\AssetManagementSystem\Resource.cs" />
     <Compile Include="Models\AssetManagementSystem\User.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -302,6 +304,7 @@
     <Content Include="Views\Facilities\Resources.cshtml" />
     <Content Include="Views\Resources\UpdateQuantity.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Manage\EditUserDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

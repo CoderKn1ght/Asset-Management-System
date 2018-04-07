@@ -2,6 +2,7 @@ using Asset_Management_System.Models.AssetManagementSystem;
 using System.Collections.Generic;
 using System.Linq;
 using Asset_Management_System.Data;
+using Asset_Management_System.Helper;
 
 namespace Asset_Management_System.Migrations
 {
@@ -16,19 +17,6 @@ namespace Asset_Management_System.Migrations
 
         protected override void Seed(Asset_Management_System.Data.AssetManagementContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-            
                 var facilities = new List<Facility>()
                 {
                     new Facility()
@@ -84,13 +72,13 @@ namespace Asset_Management_System.Migrations
                 };
             resources.ForEach(s => context.Resources.AddOrUpdate(p => p.ResourceName, s));
             context.SaveChanges();
-
+            var salt = "ASS3TM4N4G3M3NT!";
             var users = new List<User>()
                 {
                     new User
                     {
                         UserName = "admin",
-                        Password = "password",
+                        Password = SecurityHelper.HashPassword("password",ref salt),
                         IsAdmin = true,
                         IsActive = true,
                         Facilities = new List<Facility>()
@@ -98,15 +86,14 @@ namespace Asset_Management_System.Migrations
                     new User
                     {
                         UserName = "resource_checker",
-                        Password = "password",
-                        IsAdmin = true,
+                        Password = SecurityHelper.HashPassword("password",ref salt),
+                        IsAdmin = false,
                         IsActive = true,
                         Facilities = new List<Facility>()
                     }
                 };
             users.ForEach(s => context.Users.AddOrUpdate(p => p.UserName, s));
             context.SaveChanges();
-            AddOrUpdateUser(context, "admin", "ERB");
             AddOrUpdateUser(context, "resource_checker", "ERB");
             context.SaveChanges();
 
