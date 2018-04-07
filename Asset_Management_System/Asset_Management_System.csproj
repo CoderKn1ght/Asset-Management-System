@@ -213,7 +213,6 @@
     <Compile Include="ViewModels\FacilityResourceViewModel.cs" />
     <Compile Include="ViewModels\FacilityViewModel.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
-    <Compile Include="ViewModels\UserDetailsEditViewModel.cs" />
     <Compile Include="ViewModels\UserFacilityViewModel.cs" />
     <Compile Include="Models\AssetManagementSystem\Facility.cs" />
     <Compile Include="ViewModels\InventoryCheckViewModel.cs" />
@@ -225,6 +224,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-lumen.css" />
     <Content Include="Content\bootstrap-test.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -304,7 +304,6 @@
     <Content Include="Views\Facilities\Resources.cshtml" />
     <Content Include="Views\Resources\UpdateQuantity.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
-    <Content Include="Views\Manage\EditUserDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

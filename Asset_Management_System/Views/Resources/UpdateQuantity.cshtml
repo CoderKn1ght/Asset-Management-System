@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Inventory Check";
 }
-
+<script src="~/Scripts/jquery-3.3.1.js"></script>
 <h2>Inventory Check</h2>
 
 @using (Html.BeginForm("UpdateQuantity", "Resources", new { validate = @ViewBag.Validate }, FormMethod.Post, new { @class = "form-horizontal", role = "form", @onsubmit = "return formValidate()" }))
@@ -68,7 +68,6 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
 <script>
     $(document).ready(function () {
         if (document.getElementById("IsAdmin").value !== "True") {
