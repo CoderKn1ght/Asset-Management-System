@@ -203,6 +203,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\DatabaseHelper.cs" />
     <Compile Include="Helper\SecurityHelper.cs" />
     <Compile Include="Migrations\201804020302070_InitialMigration.cs" />
     <Compile Include="Migrations\201804020302070_InitialMigration.Designer.cs">

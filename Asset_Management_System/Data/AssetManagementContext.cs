@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using Asset_Management_System.Models.AssetManagementSystem;
+using Asset_Management_System.Helper;
 
 namespace Asset_Management_System.Data
 {
