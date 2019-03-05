@@ -16,9 +16,9 @@ namespace Asset_Management_System.Helper
 
             if (string.IsNullOrEmpty(dbname)) return null;
 
-            var username = appConfig["shashank"];
-            var password = appConfig["CSE5320#"];
-            var hostname = appConfig["aa1tptq4804zunb.cm0hzguvk0l2.us-east-2.rds.amazonaws.com"];
+            var username = appConfig["username"];
+            var password = appConfig["password"];
+            var hostname = appConfig["hostname"];
             var port = appConfig["1433"];
 
             return "Data Source=" + hostname + "," + port + ";Initial Catalog=" + dbname + ";User ID=" + username + ";Password=" + password + ";";
